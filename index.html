@@ -4,7 +4,6 @@
   <title>Network | Basic usage</title>
 
   <script type="text/javascript" src="https://almende.github.io/vis/dist/vis.js"></script>
-  <link href="../../dist/vis-network.min.css" rel="stylesheet" type="text/css" />
 
   <style type="text/css">
     #mynetwork {
@@ -71,25 +70,36 @@
  
   refresh()
 
+  var selectedEdge = 0
+  var selectedNode = 0
+  var selecting = "none"
+
   function refresh() {
     var network = new vis.Network(container, data, options)
     network.on("click", function(params) {
-      if (params.nodes.length + params.edges.length == 0)
+      if (params.nodes.length + params.edges.length == 0) {
         document.getElementById("selecting").innerHTML = ``
+        selecting = "none"
+      }
     })
 
     network.on("selectNode", function(params) {
       console.log("select node")
       console.log(params)
-      document.getElementById("selecting").innerHTML = `now selecting node (${params.nodes[0]})`;
+      selectedNode = params.nodes[0]
+      selecting = "node"
+      document.getElementById("selecting").innerHTML = `now selecting node (${selectedNode})`;
     })
 
 
     network.on("selectEdge", function(params) {
       if (params.nodes.length == 0 && params.edges.length == 1) {
         console.log("select edge")
+        selecting = "edge"
         console.log(params)
-        document.getElementById("selecting").innerHTML = "now selecting edge";
+        selectedEdge = params.edges[0]
+        let edge = edges.get(selectedEdge)
+        document.getElementById("selecting").innerHTML = `now selecting edge (${edge.from})--(${edge.to})`;
       }
     })
   }
